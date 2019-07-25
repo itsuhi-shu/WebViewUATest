@@ -86,9 +86,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (@available(iOS 13.0, *)) {
-        return 5;
+        return 6;
     }
-    return 4;
+    return 5;
 }
 
 
@@ -97,22 +97,25 @@
     cell.textLabel.font = [UIFont systemFontOfSize:14];
 
     switch (indexPath.row) {
-        case 0:
+    case 0:
         cell.textLabel.text = @"UIWebView_executeJS";
         break;
-        case 1:
+    case 1:
         cell.textLabel.text = @"WKWebView_executeJS";
         break;
-        case 2:
+    case 2:
         cell.textLabel.text = @"UIWebView_loadHTML";
         break;
-        case 3:
+    case 3:
         cell.textLabel.text = @"WKWebView_loadHTML";
         break;
     case 4:
+        cell.textLabel.text = @"WKWebView_loadHTML_callback";
+        break;
+    case 5:
         cell.textLabel.text = @"WKWebView_mobileLoadHTML(iOS13)";
         break;
-        default:
+    default:
         break;
     }
     return cell;

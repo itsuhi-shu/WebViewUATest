@@ -46,6 +46,7 @@
             addEventListener("DOMContentLoaded", () => {
                 const outputElement = document.querySelector(".out > code");
                 outputElement.textContent = `"${navigator.userAgent}"`;
+                window.webkit.messageHandlers.postua.postMessage(`${navigator.userAgent}`);
             });
         </script>
     </head>

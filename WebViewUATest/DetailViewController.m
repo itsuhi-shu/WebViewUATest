@@ -9,7 +9,7 @@
 #import "DetailViewController.h"
 #import <WebKit/WebKit.h>
 
-@interface DetailViewController () <WKNavigationDelegate>
+@interface DetailViewController () <WKNavigationDelegate, WKScriptMessageHandler>
 
 @end
 
@@ -38,9 +38,19 @@
             WKWebView *wkWebView = [[WKWebView alloc] initWithFrame: self.view.bounds configuration:[WKWebViewConfiguration new]];
             [self.view addSubview:wkWebView];
             [wkWebView loadFileURL:[NSURL fileURLWithPath:urlPath] allowingReadAccessToURL:[NSBundle mainBundle].bundleURL];
-        } else if (_pattern == 5) {
+        } else if (_pattern == 6) {
             WKWebView *wkWebView = [[WKWebView alloc] initWithFrame: self.view.bounds configuration:[WKWebViewConfiguration new]];
             wkWebView.navigationDelegate = self;
+            [self.view addSubview:wkWebView];
+            [wkWebView loadFileURL:[NSURL fileURLWithPath:urlPath] allowingReadAccessToURL:[NSBundle mainBundle].bundleURL];
+        } else if (_pattern == 5) {
+            WKUserContentController *controller = [WKUserContentController new];
+            [controller addScriptMessageHandler:self name:@"postua"];
+            WKWebViewConfiguration *config = [WKWebViewConfiguration new];
+            config.userContentController = controller;
+            WKWebView *wkWebView = [[WKWebView alloc] initWithFrame: self.view.bounds configuration:config];
+            wkWebView.navigationDelegate = self;
+            [wkWebView setHidden:YES];
             [self.view addSubview:wkWebView];
             [wkWebView loadFileURL:[NSURL fileURLWithPath:urlPath] allowingReadAccessToURL:[NSBundle mainBundle].bundleURL];
         }
@@ -73,11 +83,19 @@
     [self configureView];
 }
 
+#pragma mark - WKWebView Delegates
+
 - (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler  API_AVAILABLE(ios(13.0)){
-    if (_pattern == 5) {
+    if (_pattern == 6) {
         preferences.preferredContentMode = WKContentModeMobile;
     }
     decisionHandler(WKNavigationActionPolicyAllow, preferences);
+}
+
+- (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message {
+    if ([message.name isEqualToString:@"postua"]) {
+        self.detailDescriptionLabel.text = [message.body description];
+    }
 }
 
 @end
