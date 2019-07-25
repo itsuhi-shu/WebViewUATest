@@ -9,7 +9,7 @@
 #import "DetailViewController.h"
 #import <WebKit/WebKit.h>
 
-@interface DetailViewController ()
+@interface DetailViewController () <WKNavigationDelegate>
 
 @end
 
@@ -36,6 +36,11 @@
             [uiWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:urlPath]]];
         } else if (_pattern == 4)  {
             WKWebView *wkWebView = [[WKWebView alloc] initWithFrame: self.view.bounds configuration:[WKWebViewConfiguration new]];
+            [self.view addSubview:wkWebView];
+            [wkWebView loadFileURL:[NSURL fileURLWithPath:urlPath] allowingReadAccessToURL:[NSBundle mainBundle].bundleURL];
+        } else if (_pattern == 5) {
+            WKWebView *wkWebView = [[WKWebView alloc] initWithFrame: self.view.bounds configuration:[WKWebViewConfiguration new]];
+            wkWebView.navigationDelegate = self;
             [self.view addSubview:wkWebView];
             [wkWebView loadFileURL:[NSURL fileURLWithPath:urlPath] allowingReadAccessToURL:[NSBundle mainBundle].bundleURL];
         }
@@ -68,5 +73,11 @@
     [self configureView];
 }
 
+- (void)webView:(WKWebView *)webView decidePolicyForNavigationAction:(WKNavigationAction *)navigationAction preferences:(WKWebpagePreferences *)preferences decisionHandler:(void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))decisionHandler  API_AVAILABLE(ios(13.0)){
+    if (_pattern == 5) {
+        preferences.preferredContentMode = WKContentModeMobile;
+    }
+    decisionHandler(WKNavigationActionPolicyAllow, preferences);
+}
 
 @end

@@ -85,12 +85,16 @@
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (@available(iOS 13.0, *)) {
+        return 5;
+    }
     return 4;
 }
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    cell.textLabel.font = [UIFont systemFontOfSize:14];
 
     switch (indexPath.row) {
         case 0:
@@ -104,6 +108,9 @@
         break;
         case 3:
         cell.textLabel.text = @"WKWebView_loadHTML";
+        break;
+    case 4:
+        cell.textLabel.text = @"WKWebView_mobileLoadHTML(iOS13)";
         break;
         default:
         break;
